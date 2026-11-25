@@ -1,5 +1,10 @@
 # openchamber-extension-antigravity
 
+[![release](https://img.shields.io/github/v/release/JoseGalRe/openchamber-extension-antigravity?label=release)](https://github.com/JoseGalRe/openchamber-extension-antigravity/releases/latest)
+[![npm](https://img.shields.io/npm/v/@josegalre/openchamber-extension-antigravity?label=npm)](https://www.npmjs.com/package/@josegalre/openchamber-extension-antigravity)
+[![tests](https://img.shields.io/github/actions/workflow/status/JoseGalRe/openchamber-extension-antigravity/publish.yml?label=tests)](https://github.com/JoseGalRe/openchamber-extension-antigravity/actions/workflows/publish.yml)
+[![license](https://img.shields.io/github/license/JoseGalRe/openchamber-extension-antigravity)](LICENSE)
+
 An OpenChamber extension for Google Antigravity: it adds the Antigravity provider to OpenCode through
 [`@josegalre/opencode-plugin-antigravity-acp`](https://www.npmjs.com/package/@josegalre/opencode-plugin-antigravity-acp),
 and shows how much of your Gemini quota is left on OpenChamber's Usage page.
