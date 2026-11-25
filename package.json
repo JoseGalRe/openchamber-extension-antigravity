@@ -1,6 +1,6 @@
 {
   "name": "@josegalre/openchamber-extension-antigravity",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Google Antigravity in OpenChamber: the opencode-plugin-antigravity-acp provider and a Usage card read from the agy CLI.",
   "keywords": [
     "agy",
