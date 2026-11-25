@@ -1,0 +1,41 @@
+# Runs the same gate a change needs locally (`pnpm ready`: vp check, the ZIP and every test), for a release tag, a pull
+# request or a manual run. Pushes to main run nothing: a version is checked when it is tagged. It publishes nothing:
+# publish.yml does.
+#
+# GitHub and the Gitea mirror both run this file: Gitea reads `.github/workflows` when the repository has no
+# `.gitea/workflows`. On Gitea a tag from `pnpm release` runs it on the self-hosted runner labelled `linux` (host mode
+# on AGAMOTTO). On GitHub a tag runs publish.yml, which runs the same gate before it publishes, so this job runs there
+# only for pull requests and manual runs.
+name: CI
+
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ready:
+    if: github.server_url != 'https://github.com' || github.event_name != 'push'
+    runs-on: ${{ github.server_url == 'https://github.com' && 'ubuntu-latest' || 'linux' }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@9bbca1e9dc2902adb87e8780fe5c98796985a62d # v6.1.1
+        with:
+          version: 12.22.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26.13.1
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm ready

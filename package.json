@@ -1,0 +1,92 @@
+{
+  "name": "@josegalre/openchamber-extension-antigravity",
+  "version": "0.1.0",
+  "description": "Google Antigravity in OpenChamber: the opencode-plugin-antigravity-acp provider and a Usage card read from the agy CLI.",
+  "keywords": [
+    "agy",
+    "antigravity",
+    "gemini",
+    "openchamber",
+    "openchamber-extension",
+    "opencode"
+  ],
+  "homepage": "https://github.com/JoseGalRe/openchamber-extension-antigravity#readme",
+  "bugs": {
+    "url": "https://github.com/JoseGalRe/openchamber-extension-antigravity/issues"
+  },
+  "license": "MIT",
+  "author": "Jose Adolfo Galdamez <jose@galre.dev>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoseGalRe/openchamber-extension-antigravity.git"
+  },
+  "files": [
+    "dist/icon.svg",
+    "dist/plugin",
+    "dist/service"
+  ],
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepare": "vp config --no-agent",
+    "build": "vp pack",
+    "zip": "vp pack && node scripts/zip.ts",
+    "test": "vp test",
+    "lint:check": "vp lint",
+    "lint:fix": "vp lint --fix",
+    "format:check": "vp format --check",
+    "format:fix": "vp format",
+    "cspell:check": "cspell lint",
+    "ready": "vp check && pnpm run zip && vp test",
+    "release": "node scripts/release.ts"
+  },
+  "devDependencies": {
+    "@josegalre/opencode-plugin-antigravity-acp": "0.5.0",
+    "@openchamber/sdk": "2.7.3",
+    "@types/node": "22.20.5",
+    "cspell": "10.5.2",
+    "fflate": "0.8.3",
+    "vite-plus": "1.8.0",
+    "zod": "4.6.7"
+  },
+  "engines": {
+    "node": ">=26.13.1",
+    "pnpm": ">=12.16.1",
+    "runtime": {
+      "name": "node",
+      "version": "26.13.1",
+      "onFail": "download"
+    }
+  },
+  "openchamber": {
+    "apiVersion": 1,
+    "engines": {
+      "openchamber": ">=2.7.0"
+    },
+    "contributes": {
+      "panel": {
+        "id": "antigravity",
+        "name": "Antigravity",
+        "icon": "dist/icon.svg"
+      },
+      "service": {
+        "entry": "dist/service/index.js",
+        "runtime": "host",
+        "provides": [
+          "quota"
+        ],
+        "permissions": {
+          "exec": [
+            "agy"
+          ]
+        }
+      },
+      "quota": {
+        "providers": []
+      },
+      "opencodePlugin": "dist/plugin"
+    }
+  }
+}

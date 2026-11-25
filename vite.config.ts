@@ -1,0 +1,122 @@
+import { readFileSync } from 'node:fs';
+
+import { defineConfig } from 'vite-plus';
+
+/**
+ * Every dependency is bundled into the service, so its file carries their licenses.
+ */
+const BUNDLED_LICENSES = [
+  ['@openchamber/sdk', 'https://github.com/openchamber/openchamber'],
+  ['zod', 'https://github.com/colinhacks/zod'],
+].map(([name, url]) => `Includes ${name} (${url}):\n${readFileSync(`node_modules/${name}/LICENSE`, 'utf8').trimEnd()}`);
+
+export default defineConfig({
+  pack: {
+    banner: {
+      js: `/*\n${BUNDLED_LICENSES.join('\n\n')}\n*/`,
+    },
+    clean: true,
+    deps: {
+      alwaysBundle: [/.*/],
+      onlyBundle: false,
+      onlyImport: [],
+    },
+    /**
+     * The service is a program OpenChamber starts; nothing imports its types.
+     */
+    dts: false,
+    entry: {
+      index: 'src/index.ts',
+    },
+    fixedExtension: false,
+    format: ['esm'],
+    inputOptions: {
+      experimental: {
+        attachDebugInfo: 'none',
+      },
+    },
+    minify: true,
+    outDir: 'dist/service',
+    platform: 'node',
+    root: 'src',
+    sourcemap: false,
+    /**
+     * OpenChamber runs the service with its own runtime: Node 22 or later under Electron, or Bun.
+     */
+    target: 'node22',
+  },
+  lint: {
+    env: {
+      node: true,
+      vitest: true,
+    },
+    plugins: ['eslint', 'jsdoc', 'node', 'oxc', 'promise', 'typescript', 'unicorn', 'import', 'vitest'],
+    categories: {
+      correctness: 'error',
+      nursery: 'error',
+      suspicious: 'warn',
+    },
+    options: {
+      typeAware: true,
+      typeCheck: true,
+      denyWarnings: true,
+    },
+    rules: {
+      /**
+       * Prevent circular dependencies, which can cause runtime errors and make code harder to understand.
+       */
+      'import/no-cycle': 'error',
+    },
+    ignorePatterns: ['**/.git', '**/.vscode', '**/build', '**/coverage', '**/dist', '**/node_modules', '**/pnpm-lock.*'],
+    overrides: [
+      {
+        files: ['**/*.test.ts', 'tests/**', 'scripts/**'],
+        rules: {
+          'typescript/restrict-template-expressions': 'off',
+          'typescript/no-base-to-string': 'off',
+          'eslint/no-shadow': 'off',
+        },
+      },
+    ],
+  },
+  fmt: {
+    printWidth: 128,
+    tabWidth: 2,
+    useTabs: false,
+    semi: true,
+    singleQuote: true,
+    quoteProps: 'consistent',
+    trailingComma: 'all',
+    sortImports: {
+      newlinesBetween: true,
+      groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type'],
+    },
+    ignorePatterns: ['dist/**', 'pnpm-lock.yaml'],
+  },
+  test: {
+    coverage: {
+      exclude: [
+        '**/node_modules/**',
+        '**/build/**',
+        '**/dist/**',
+        '**/.{git,cache,output,temp}/**',
+        '**/{*-test,*-types,index}.{js,ts,jsx,tsx}',
+        '**/*.json',
+      ],
+      thresholds: {
+        branches: 100,
+        functions: 100,
+        lines: 100,
+        perFile: true,
+        statements: 100,
+      },
+    },
+    environment: 'node',
+    globals: true,
+    include: ['src/**/*.test.ts', 'scripts/**/*.test.ts'],
+    testTimeout: 30_000,
+  },
+  staged: {
+    '*': 'vp fmt --no-error-on-unmatched-pattern',
+  },
+});
