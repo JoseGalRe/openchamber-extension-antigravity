@@ -72,11 +72,11 @@ Vite+ (`vp`) owns formatting, linting, the type check, tests and hooks, configur
 - To try the built service against the real `agy`, start `dist/service/index.js` with `OPENCHAMBER_SERVICE_PORT` and
   `OPENCHAMBER_SERVICE_TOKEN` under `env -i PATH=/usr/bin:/bin HOME=$HOME` (OpenChamber hands a service only PATH, HOME,
   temp and locale), `POST /quota` a `usage.read` with that bearer, and stop it by its PID.
-- CI runs per tag, never per commit, as in the plugin: pushes to `main` run nothing. `.github/workflows/ci.yml` runs
-  `pnpm ready` for a `v*` tag on the Gitea mirror (self-hosted runner labelled `linux`), and for pull requests and
-  manual runs on both; on GitHub a tag runs `publish.yml`, which runs the same gate first. Gitea reads
-  `.github/workflows` because the repository has no `.gitea/workflows`. Do not add one. `publish.yml` runs its jobs on
-  GitHub only.
+- CI runs per tag, never per commit, as in the plugin: pushes to `main` run nothing. A `v*` tag runs
+  `.github/workflows/publish.yml` on both hosts: on GitHub its `publish` and `release` jobs, on the Gitea mirror its
+  `ready` job only (`pnpm ready` on the self-hosted runner labelled `linux`). `.github/workflows/ci.yml` runs the same
+  gate for pull requests and manual runs. Gitea reads `.github/workflows` because the repository has no
+  `.gitea/workflows`. Do not add one.
 
 ## Releases
 
